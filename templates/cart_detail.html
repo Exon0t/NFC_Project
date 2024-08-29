@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Detail</title>
+</head>
+<body>
+    <h1>Cart Detail</h1>
+    <img src="{{ url_for('static', filename='uploads/' + cart.cart_icon) }}" alt="Cart Icon" width="100" height="100">
+    <form method="POST">
+        <label for="number_of_items">Number of Items:</label>
+        <input type="number" id="number_of_items" name="number_of_items" value="{{ cart.number_of_items }}" required min="0" max="{{ cart.max_number_of_items }}"><br><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" value="{{ cart.location }}" required><br><br>
+
+        <button type="submit">Update Cart</button>
+    </form>
+    <a href="{{ url_for('index') }}">Back to List</a>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>

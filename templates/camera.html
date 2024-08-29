@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera and Barcode Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+    <h1>Camera and Barcode Scanner</h1>
+    <video id="video" width="300" height="200" autoplay></video>
+    <button id="capture">Capture</button>
+    <canvas id="canvas" width="300" height="200" style="display:none;"></canvas>
+    <div id="barcodeResult"></div>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const barcodeResult = document.getElementById('barcodeResult');
+
+        // Access the camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Error accessing the camera: ', err);
+            });
+
+        // Capture the image and scan the barcode
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Use Quagga to decode the barcode
+            Quagga.decodeSingle({
+                src: canvas.toDataURL(),
+                numOfWorkers: 0,  // Needs to be 0 when used with decodeSingle
+                inputStream: {
+                    size: 800  // restrict input-size to be 800px in width (long-side)
+                },
+                decoder: {
+                    readers: ["code_128_reader"] // List of active readers
+                },
+            }, function(result) {
+                if(result && result.codeResult) {
+                    barcodeResult.textContent = `Barcode detected: ${result.codeResult.code}`;
+                } else {
+                    barcodeResult.textContent = 'No barcode detected.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
