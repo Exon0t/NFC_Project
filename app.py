@@ -14,7 +14,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="&Soul4242564",
+    password="",
     database="carts_db"
 )
 
